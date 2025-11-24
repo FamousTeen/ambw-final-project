@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:manpro/features/bagian_utama/Tampilan/article/article.dart';
 import 'package:manpro/features/bagian_utama/Tampilan/donation/donation.dart';
 import 'package:manpro/features/bagian_utama/Tampilan/donation/donation_gallery/donation_gallery.dart';
-import 'package:manpro/features/bagian_utama/Tampilan/donation/donation_goal/donation_goal.dart';
 import 'package:manpro/features/bagian_utama/Tampilan/event/event.dart';
 import 'package:manpro/features/bagian_utama/Tampilan/event/event_detail/event_detail.dart';
 import 'package:manpro/features/bagian_utama/Tampilan/profile_yayasan/profile_yayasan.dart';

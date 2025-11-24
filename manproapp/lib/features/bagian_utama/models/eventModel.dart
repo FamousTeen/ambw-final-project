@@ -1,5 +1,7 @@
 import 'package:manpro/features/bagian_utama/models/eventCategoryModel.dart';
+import 'package:manpro/utils/constants/api_constants.dart';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
 /// Model untuk merepresentasikan sebuah event
 class Event {
@@ -36,19 +38,61 @@ class Event {
   // =========== FACTORY METHODS ===========
   /// Membuat instance Event dari JSON
   factory Event.fromJson(Map<String, dynamic> json) {
-    print('Parsing event JSON for ID: ${json['id']}');
-    
+    // Helper to process image URL
+    String processImageUrl(String? imgPath) {
+      if (imgPath == null || imgPath.isEmpty) return '';
+
+      // Fix for CORS on localhost:8000 (php artisan serve)
+      if (kIsWeb) {
+        if (imgPath.contains('localhost:8000/storage/')) {
+          return imgPath.replaceFirst('storage/', 'api/public-image/');
+        }
+        if (!imgPath.startsWith('http')) {
+           return '${url}public-image/$imgPath';
+        }
+      }
+
+      if (imgPath.startsWith('http')) return imgPath;
+
+      // Remove /api/ from the base url to get the root url
+      // url is defined in api_constants.dart e.g. 'http://10.0.2.2:8000/api/'
+      String baseUrl = url;
+      if (url.endsWith('/api/')) {
+        baseUrl = url.substring(
+            0, url.length - 4); // remove 'api/' but keep trailing slash
+      } else if (url.endsWith('/api')) {
+        baseUrl = url.substring(0, url.length - 3);
+      }
+
+      // Ensure baseUrl ends with /
+      if (!baseUrl.endsWith('/')) {
+        baseUrl = '$baseUrl/';
+      }
+
+      // Ensure imgPath does not start with /
+      String cleanImgPath = imgPath;
+      if (cleanImgPath.startsWith('/')) {
+        cleanImgPath = cleanImgPath.substring(1);
+      }
+
+      final finalUrl = '$baseUrl$cleanImgPath';
+      print('Processed image URL: $imgPath -> $finalUrl');
+      return finalUrl;
+    }
+
     return Event(
       id: json['id'],
       title: json['title'],
       content: json['content'],
-      image: json['image'],
+      image: processImageUrl(json['image']),
       date: json['date'],
       time: json['time'] ?? '',
       createdAt: json['created_at'],
       registrationsCount: json['registrations_count'] ?? 0,
       capacity: json['capacity'],
-      additionalImages: _parseAdditionalImages(json['additional_images']),
+      additionalImages: _parseAdditionalImages(json['additional_images'])
+          ?.map((img) => processImageUrl(img))
+          .toList(),
       category: json['category'] != null
           ? EventCategory.fromJson(json['category'])
           : null,

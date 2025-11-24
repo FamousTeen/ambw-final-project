@@ -44,6 +44,15 @@ Route::get('/events/{event}', [EventController::class, 'show']);
 Route::post('/validate-email', [EventController::class, 'validateEmail']);
 Route::get('/event-categories', [EventCategoryController::class, 'index']);
 
+// Serve images via API to handle CORS
+Route::get('/public-image/{path}', function($path) {
+    $filePath = storage_path('app/public/' . $path);
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+    return response()->file($filePath);
+})->where('path', '.*');
+
 // Protected event routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/event/history', [EventController::class, 'history']);

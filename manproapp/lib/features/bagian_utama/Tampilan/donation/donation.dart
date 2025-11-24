@@ -478,7 +478,7 @@ class _DonationState extends State<Donation> with WidgetsBindingObserver {
                                         vertical: 15,
                                       ),
                                     ),
-                                    value: selectedDonationType,
+                                    initialValue: selectedDonationType,
                                     items: donationController.donationTypes
                                         .map((type) => DropdownMenuItem<String>(
                                               value: type.name,
@@ -586,7 +586,7 @@ class _DonationState extends State<Donation> with WidgetsBindingObserver {
                                         vertical: 15,
                                       ),
                                     ),
-                                    value: selectedShippingMethod,
+                                    initialValue: selectedShippingMethod,
                                     items: donationController.shippingMethods
                                         .map((method) => DropdownMenuItem<String>(
                                               value: method.name,
