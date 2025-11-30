@@ -106,7 +106,7 @@ flutter:
         - asset: assets/fonts/NunitoSans/NunitoSans-Bold.ttf
           weight: 700 # Bold
         - asset: assets/fonts/NunitoSans/NunitoSans_7pt-ExtraBold.ttf
-        - weight: 800 # ExtraBold
+          weight: 800 # ExtraBold
 
   #
   # For details regarding fonts from package dependencies,

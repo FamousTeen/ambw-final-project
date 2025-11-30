@@ -34,5 +34,14 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('pwa-service-worker.js').catch(function (error) {
+          console.warn('Service worker registration failed:', error);
+        });
+      });
+    }
+  </script>
 </body>
 </html>

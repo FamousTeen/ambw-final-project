@@ -13,6 +13,15 @@ class AuthenticationController extends GetxController {
 
   final box = GetStorage();
 
+  /// Try using a cached session without hitting the network (useful offline).
+  Future<void> tryAutoLoginWithCache() async {
+    final savedToken = box.read('token');
+    if (savedToken != null && savedToken.toString().isNotEmpty) {
+      token.value = savedToken.toString();
+      Get.offAll(() => const Navbar());
+    }
+  }
+
   Future register({
     required String nama_lengkap,
     required String username,
@@ -108,7 +117,27 @@ class AuthenticationController extends GetxController {
         print(json.decode(response.body));
       }
     } catch (e) {
-      print(e.toString());
+      // If offline or request fails, allow fallback to cached token.
+      final savedToken = box.read('token');
+      if (savedToken != null && savedToken.toString().isNotEmpty) {
+        token.value = savedToken.toString();
+        Get.snackbar(
+          'Offline',
+          'Using saved session',
+          backgroundColor: Colors.blue,
+          colorText: Colors.white,
+        );
+        Get.offAll(() => const Navbar());
+      } else {
+        Get.snackbar('Error', 'Login failed. Check connection.',
+            margin: const EdgeInsets.only(bottom: 10.0),
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
+        print(e.toString());
+      }
+    } finally {
+      isLoading.value = false;
     }
   }
 

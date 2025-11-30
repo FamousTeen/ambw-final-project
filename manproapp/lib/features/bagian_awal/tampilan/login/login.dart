@@ -20,6 +20,14 @@ class _LoginState extends State<Login> {
       Get.put(AuthenticationController());
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      authenticationController.tryAutoLoginWithCache();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
