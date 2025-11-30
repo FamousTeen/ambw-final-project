@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:manpro/common/widgets/background_app.dart';
@@ -35,16 +36,20 @@ class _EventHistoryState extends State<EventHistory> {
       isLoading.value = true;
       error.value = '';
 
-      // Cek koneksi internet terlebih dahulu
-      final result = await InternetAddress.lookup('google.com')
-          .timeout(const Duration(seconds: 10));
+      // Cek koneksi internet terlebih dahulu (skip jika di web)
+      if (!kIsWeb) {
+        final result = await InternetAddress.lookup('google.com')
+            .timeout(const Duration(seconds: 10));
 
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        // Jika ada koneksi internet, ambil data event history
-        await eventController.getEventHistory();
-      } else {
-        error.value = 'Tidak ada koneksi internet';
+        if (result.isEmpty || result[0].rawAddress.isEmpty) {
+          error.value = 'Tidak ada koneksi internet';
+          isLoading.value = false;
+          return;
+        }
       }
+
+      // Ambil data event history
+      await eventController.getEventHistory();
     } on SocketException catch (_) {
       error.value = 'Tidak dapat terhubung ke internet';
     } on TimeoutException catch (_) {

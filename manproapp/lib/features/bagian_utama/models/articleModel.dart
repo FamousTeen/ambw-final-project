@@ -28,12 +28,18 @@ class Article {
 
       // Fix for CORS on localhost:8000 (php artisan serve)
       if (kIsWeb) {
+        String processedUrl;
         if (imgPath.contains('localhost:8000/storage/')) {
-          return imgPath.replaceFirst('storage/', 'api/public-image/');
+          processedUrl = imgPath.replaceFirst('storage/', 'api/public-image/');
+        } else if (!imgPath.startsWith('http')) {
+           processedUrl = '${url}public-image/$imgPath';
+        } else {
+           processedUrl = imgPath;
         }
-        if (!imgPath.startsWith('http')) {
-           return '${url}public-image/$imgPath';
-        }
+        
+        // Append timestamp to force refresh
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
+        return '$processedUrl?t=$timestamp';
       }
 
       if (imgPath.startsWith('http')) return imgPath;
@@ -56,8 +62,13 @@ class Article {
       }
 
       final finalUrl = '$baseUrl$cleanImgPath';
-      print('Processed Article image URL: $imgPath -> $finalUrl');
-      return finalUrl;
+      
+      // Append timestamp to force refresh image cache
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final urlWithTimestamp = '$finalUrl?t=$timestamp';
+      
+      print('Processed Article image URL: $imgPath -> $urlWithTimestamp');
+      return urlWithTimestamp;
     }
 
     return Article(

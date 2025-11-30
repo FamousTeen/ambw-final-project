@@ -56,11 +56,20 @@ class _EventDetailState extends State<EventDetail> {
   final _images = <String>[].obs;
   final _isLoading = true.obs;
   late final EventController _eventController;
+  
+  // Local state for dynamic updates
+  late int _registrationsCount;
+  late int? _capacity;
 
   @override
   void initState() {
     super.initState();
     _eventController = Get.find<EventController>();
+    
+    // Initialize local state from widget parameters
+    _registrationsCount = widget.registrationsCount;
+    _capacity = widget.capacity;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeImages();
       _loadEventDetail();
@@ -84,14 +93,23 @@ class _EventDetailState extends State<EventDetail> {
         (e) => e.id == widget.eventId,
       );
 
-      if (event != null &&
-          event.additionalImages != null &&
-          event.additionalImages!.isNotEmpty) {
-        _images.clear();
-        if (event.image.isNotEmpty) {
-          _images.add(event.image);
+      if (event != null) {
+        // Update local state with fresh data
+        if (mounted) {
+          setState(() {
+            _registrationsCount = event.registrationsCount;
+            _capacity = event.capacity;
+          });
         }
-        _images.addAll(event.additionalImages!);
+
+        if (event.additionalImages != null &&
+            event.additionalImages!.isNotEmpty) {
+          _images.clear();
+          if (event.image.isNotEmpty) {
+            _images.add(event.image);
+          }
+          _images.addAll(event.additionalImages!);
+        }
       }
     } catch (e) {
       print('Error loading event detail: $e');
@@ -109,14 +127,14 @@ class _EventDetailState extends State<EventDetail> {
   // Improved validation for slot availability
   bool _isSlotAvailable() {
     // If no capacity set, event is always available
-    if (widget.capacity == null) return true;
+    if (_capacity == null) return true;
 
     // Basic validation checks
-    if (widget.registrationsCount < 0) return false;
-    if (widget.capacity! <= 0) return false;
+    if (_registrationsCount < 0) return false;
+    if (_capacity! <= 0) return false;
 
     // Check if slots are still available
-    return widget.registrationsCount < widget.capacity!;
+    return _registrationsCount < _capacity!;
   }
 
   // Improved validation for registration eligibility
@@ -159,7 +177,7 @@ class _EventDetailState extends State<EventDetail> {
           SafeArea(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+                padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -235,20 +253,20 @@ class _EventDetailState extends State<EventDetail> {
                     Obx(() {
                       if (_isLoading.value) {
                         return const SizedBox(
-                          height: 200,
+                          height: 500,
                           child: Center(child: CircularProgressIndicator()),
                         );
                       }
 
                       if (_images.isEmpty) {
                         return const SizedBox(
-                          height: 200,
+                          height: 500,
                           child: Center(child: Text('No images available')),
                         );
                       }
 
                       return SizedBox(
-                        height: 200,
+                        height: 500,
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -276,7 +294,7 @@ class _EventDetailState extends State<EventDetail> {
                                     borderRadius: BorderRadius.circular(16),
                                     child: Image.network(
                                       _images[index],
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fill,
                                       cacheWidth: 800,
                                       loadingBuilder:
                                           (context, child, loadingProgress) {
@@ -402,7 +420,7 @@ class _EventDetailState extends State<EventDetail> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          if (widget.capacity != null) ...[
+                          if (_capacity != null) ...[
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
@@ -429,7 +447,7 @@ class _EventDetailState extends State<EventDetail> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        '${widget.registrationsCount} / ${widget.capacity}',
+                                        '$_registrationsCount / $_capacity',
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontFamily: 'NunitoSans',
@@ -511,9 +529,9 @@ class _EventDetailState extends State<EventDetail> {
   }
 
   Color _getCapacityColor() {
-    if (widget.capacity == null) return Colors.blue;
+    if (_capacity == null) return Colors.blue;
 
-    final percentage = (widget.registrationsCount / widget.capacity!) * 100;
+    final percentage = (_registrationsCount / _capacity!) * 100;
     if (percentage >= 100) {
       return Colors.red;
     } else if (percentage >= 80) {
@@ -524,9 +542,9 @@ class _EventDetailState extends State<EventDetail> {
   }
 
   String _getCapacityStatus() {
-    if (widget.capacity == null) return 'Tidak ada batasan slot';
+    if (_capacity == null) return 'Tidak ada batasan slot';
 
-    final percentage = (widget.registrationsCount / widget.capacity!) * 100;
+    final percentage = (_registrationsCount / _capacity!) * 100;
     if (percentage >= 100) {
       return 'Slot Penuh';
     } else if (percentage >= 80) {

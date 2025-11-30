@@ -34,6 +34,16 @@ class DatabaseSeeder extends Seeder
             'password' => "user2",
         ]);
 
+        $user2 = User::factory()->create([
+            'nama_lengkap' => 'Another User',
+            'username' => 'user3',
+            'email' => 'test3@example.com',
+            'kota_asal' => 'Rivertown',
+            'no_telpon' => '9412345678',
+            'password' => "user2",
+            'is_admin' => true,
+        ]);
+
         // Donation types
         $dt1 = DB::table('donation_types')->insertGetId([
             'name' => 'Clothes',

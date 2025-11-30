@@ -51,8 +51,11 @@ class DonationModel {
   String get formattedDate {
     if (createdAt == null) return '-';
     try {
-      final date = DateTime.parse(createdAt!);
-      return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}';
+      // Convert to local time (WIB if user is in Indonesia)
+      final date = DateTime.parse(createdAt!).toLocal();
+      // Pad minutes with 0 for better formatting (e.g. 10:05 instead of 10:5)
+      final minute = date.minute.toString().padLeft(2, '0');
+      return '${date.day}/${date.month}/${date.year} ${date.hour}:$minute';
     } catch (e) {
       return createdAt!;
     }

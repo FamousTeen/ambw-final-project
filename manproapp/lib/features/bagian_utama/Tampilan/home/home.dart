@@ -136,7 +136,7 @@ class _HomeState extends State<Home> {
                 Padding(
                   padding: const EdgeInsets.only(right: 13.0),
                   child: Container(
-                    height: 150.0,
+                    height: 500.0,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
@@ -192,12 +192,12 @@ class _HomeState extends State<Home> {
                                     borderRadius: BorderRadius.circular(15),
                                     child: Image.network(
                                       event.image,
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fill,
                                       errorBuilder:
                                           (context, error, stackTrace) {
                                         return Image.asset(
                                           YPKImages.gbr_event1,
-                                          fit: BoxFit.cover,
+                                          fit: BoxFit.fill,
                                         );
                                       },
                                     ),
@@ -236,7 +236,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 37.5),
+                const SizedBox(height: 100),
 
                 //Menu di home screen
                 Padding(

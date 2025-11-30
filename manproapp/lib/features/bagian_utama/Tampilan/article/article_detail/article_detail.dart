@@ -127,7 +127,7 @@ class _ArticleDetailState extends State<ArticleDetail>
 
                       // Tampilan galeri gambar dengan PageView
                       return SizedBox(
-                        height: 200,
+                        height: 500,
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -172,7 +172,7 @@ class _ArticleDetailState extends State<ArticleDetail>
                                     borderRadius: BorderRadius.circular(16),
                                     child: Image.network(
                                       _images[index],
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.fill,
                                       // Optimasi ukuran gambar
                                       cacheWidth: MediaQuery.of(context)
                                           .size

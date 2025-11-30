@@ -41,7 +41,7 @@ class EventDetail extends StatelessWidget {
             // Image Carousel
             CarouselSlider(
               options: CarouselOptions(
-                height: 200,
+                height: 500,
                 viewportFraction: 1.0,
                 enlargeCenterPage: false,
                 autoPlay: images.length > 1,
@@ -54,7 +54,7 @@ class EventDetail extends StatelessWidget {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           image: NetworkImage(imageUrl),
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     );

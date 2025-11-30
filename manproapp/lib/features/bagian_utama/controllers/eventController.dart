@@ -59,7 +59,7 @@ class EventController extends GetxController {
 
   void _handleError(String operation, dynamic error) {
     print('Error during $operation: $error');
-    errorMessage.value = 'Terjadi kesalahan. Silakan coba lagi.';
+    errorMessage.value = '$operation gagal. $error.';
     Get.snackbar(
       'Error',
       errorMessage.value,
